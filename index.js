@@ -10,17 +10,8 @@ app.use(cors());
 app.listen(3000,()=>{
   console.log("servidor corriendo");
 })
-
-
 app.use(express.json()); //middleware
 app.use('/api/topics',topicRouter);
-
-
-
-
-
-
-
 
 process.on('SIGTERM', () => {
   pool.end(() => {
@@ -33,4 +24,4 @@ process.on('SIGINT', () => {
     console.log('Pool cerrado por interrupción');
     process.exit(0);
   });
-});
+}); 
