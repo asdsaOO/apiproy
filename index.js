@@ -2,17 +2,24 @@ const express= require('express');
 const pool=require('./conf/db');
 const cors = require('cors')
 const {topicRouter} =require('./Routers/TopicsRoute');
+const {accountRouter} = require('./Routers/AccountRoute')
 
 
 const app= express();
-app.use(cors());
+app.use(cors({origin: 'http://localhost:5173', // Cambia a la URL de tu cliente
+  credentials: true,}));
 
 app.listen(3000,()=>{
   console.log("servidor corriendo");
 })
 app.use(express.json()); //middleware
 app.use('/api/topics',topicRouter);
+app.use('/api/account',accountRouter);
 
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 process.on('SIGTERM', () => {
   pool.end(() => {
     console.log('Pool cerrado');

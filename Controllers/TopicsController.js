@@ -51,9 +51,30 @@ async function eliminarTema(req,res){
   }
 
 }
+async function modificarTema (req,res){
+  try{
+    const data = req.body;
+    console.log(("modificar tema dato recibido"));
+    console.log(data);
+    const consulta = `select* from public.fn_modificar_tema('${JSON.stringify(data)}'::jsonb);`;
+    console.log(consulta);
+    
+    const result = await pooldb.query(consulta);
+    console.log("respuesta:");
+    console.log(result.rows);
+    res.json(result.rows);
+
+  }catch(e){
+    console.log(e);
+    
+  }
+  
+  
+}
 
 module.exports={
   agregarNuevoTema,
   listarTemas,
-  eliminarTema
+  eliminarTema,
+  modificarTema
 }
