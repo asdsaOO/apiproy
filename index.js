@@ -1,8 +1,10 @@
 const express= require('express');
 const pool=require('./conf/db');
-const cors = require('cors')
+const cors = require('cors');
+const cookieParser = require('cookie-parser'); 
 const {topicRouter} =require('./Routers/TopicsRoute');
 const {accountRouter} = require('./Routers/AccountRoute')
+const {usersRoute}= require ('./Routers/UsersRoute');
 
 
 const app= express();
@@ -13,8 +15,10 @@ app.listen(3000,()=>{
   console.log("servidor corriendo");
 })
 app.use(express.json()); //middleware
+app.use(cookieParser());
 app.use('/api/topics',topicRouter);
 app.use('/api/account',accountRouter);
+app.use('/api/users',usersRoute);
 
 
 ////////////////////////////////////////////////////////////////////////

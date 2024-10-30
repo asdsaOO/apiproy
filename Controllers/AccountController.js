@@ -3,6 +3,7 @@ require('dotenv').config();
 const respModel = require('../Models/errorModel')
 const jwt = require ('jsonwebtoken');
 const argon2=require('argon2');
+const mailer=require('../helpers/SendMail')
 
 
 async function authUser(req,res){
@@ -17,14 +18,14 @@ async function authUser(req,res){
     if(await argon2.verify(response.rows[0].opassword,data.password.toString())){
       //se autentico correctamente
       const tokenPayload={
-        id:1,
+        id:data.password,
         fistName: "user",
         email: data.email,
         iat: dateIat
       }
       const token = jwt.sign(tokenPayload,process.env.JWT_KEY);
       //console.log(token);
-      res.cookie('bkauth',token);
+      res.cookie('Nkauth',token);
       res.json(respModel.successModel());
 
     }else{
@@ -65,9 +66,28 @@ async function listarRoles (req,res){
   res.json(response.rows)
 }
 
+async function registroUsuarioRapido(req,res){
+  const data=req.body;
+  console.log(data);
+  const password=data.password;
+  const passcrypt=await argon2.hash((data.password).toString());
+  data.password=passcrypt;
+  console.log(passcrypt);
+  const consulta = `select* from fn_registrar_usuario ($1::jsonb);`;
+  const response = await pooldb.query(consulta,[data]);
+  if(response.rows[0].oboolean){
+    await mailer.sendPassword(data.email,password);
+
+  }
+ 
+  console.log(response.rows);
+  res.json(response.rows);
+}
+
 
 module.exports={
   registrarUsuario,
   authUser,
-  listarRoles
+  listarRoles,
+  registroUsuarioRapido
 }
