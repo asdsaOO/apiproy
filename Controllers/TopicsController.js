@@ -2,6 +2,7 @@ const pooldb=require('../conf/db')
 
 
 
+
 async function agregarNuevoTema(req,res){
   try{
     const data= req.body;
@@ -21,10 +22,10 @@ async function agregarNuevoTema(req,res){
 
 async function listarTemas (req,res){
   try{
-    console.log();
+    //console.log();
     const consulta ="SELECT * FROM fn_listar_temas(1);";
     const result= await pooldb.query(consulta);
-    console.log(result.rows);
+    //console.log(result.rows);
     res.json(result.rows);
 
   }catch(e){
@@ -72,10 +73,24 @@ async function modificarTema (req,res){
   
   
 }
+async function listarSubtemas (req,res){
+  try{
+    const data = req.body;
+    const consulta = `SELECT * FROM public.fn_listar_subTemas($1::jsonb)`;
+    const response = await pooldb.query(consulta,[data]);
+    res.json((await response).rows)
+
+
+  }catch(e){
+    console.log(e);
+    
+  }
+}
 
 module.exports={
   agregarNuevoTema,
   listarTemas,
   eliminarTema,
-  modificarTema
+  modificarTema,
+  listarSubtemas
 }

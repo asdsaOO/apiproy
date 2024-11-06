@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const {topicRouter} =require('./Routers/TopicsRoute');
 const {accountRouter} = require('./Routers/AccountRoute')
 const {usersRoute}= require ('./Routers/UsersRoute');
+const {activitiesRouter} = require ('./Routers/ActivitiesRoute')
 
 
 const app= express();
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use('/api/topics',topicRouter);
 app.use('/api/account',accountRouter);
 app.use('/api/users',usersRoute);
+app.use('/api/activities',accountRouter)
 
 
 ////////////////////////////////////////////////////////////////////////

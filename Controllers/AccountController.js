@@ -21,7 +21,8 @@ async function authUser(req,res){
         id:data.password,
         fistName: "user",
         email: data.email,
-        iat: dateIat
+        iat: dateIat,
+        rol:data.idRol
       }
       const token = jwt.sign(tokenPayload,process.env.JWT_KEY);
       //console.log(token);
