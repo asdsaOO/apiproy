@@ -14,9 +14,27 @@ async function agregarActividad (req,res){
     console.log(e);
     
   }
+}
+
+async function listarActividades (req,res){
+  try{
+    console.log('adfadf');
+    
+    const data = req.body;
+    const consulta = `select * from public.fn_listar_actividades(5)`;
+    const response = (await (pooldb.query(consulta))).rows;
+
+    res.json (response);
+
+  }catch(e){
+
+    console.log(e);
+    
+  }
 
 }
 
 module.exports={
-  agregarActividad
+  agregarActividad,
+  listarActividades
 }

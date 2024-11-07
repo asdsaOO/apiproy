@@ -30,8 +30,6 @@ async function listarTemas (req,res){
 
   }catch(e){
     console.log(e);
-    
-    
 
   }
 }

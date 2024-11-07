@@ -20,8 +20,7 @@ app.use(cookieParser());
 app.use('/api/topics',topicRouter);
 app.use('/api/account',accountRouter);
 app.use('/api/users',usersRoute);
-app.use('/api/activities',accountRouter)
-
+app.use('/api/actividades',activitiesRouter);
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
