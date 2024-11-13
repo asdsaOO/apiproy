@@ -13,7 +13,7 @@ async function authUser(req,res){
   console.log(data);
   const consulta = `SELECT * FROM fn_verificar_usuario($1::jsonb)`;
   const response = await pooldb.query(consulta,[data]);
-  console.log(response.rows);
+  console.log('el id es'+response.rows[0].id);
   if(response.rows[0].oboolean){
     if(await argon2.verify(response.rows[0].opassword,data.password.toString())){
       //se autentico correctamente
@@ -22,7 +22,8 @@ async function authUser(req,res){
         fistName: "user",
         email: data.email,
         iat: dateIat,
-        rol:data.idRol
+        rol:data.idRol,
+        idUsuario:response.rows[0].id
       }
       const token = jwt.sign(tokenPayload,process.env.JWT_KEY);
       //console.log(token);

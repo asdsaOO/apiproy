@@ -6,6 +6,7 @@ const {topicRouter} =require('./Routers/TopicsRoute');
 const {accountRouter} = require('./Routers/AccountRoute')
 const {usersRoute}= require ('./Routers/UsersRoute');
 const {activitiesRouter} = require ('./Routers/ActivitiesRoute')
+const {lessonsRouter}= require ('./Routers/LessonsRoute');
 
 
 const app= express();
@@ -21,6 +22,7 @@ app.use('/api/topics',topicRouter);
 app.use('/api/account',accountRouter);
 app.use('/api/users',usersRoute);
 app.use('/api/actividades',activitiesRouter);
+app.use('/api/lessons',lessonsRouter);
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
