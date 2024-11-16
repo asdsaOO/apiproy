@@ -35,7 +35,7 @@ async function authUser(req,res){
     }
   
   }else{
-    res.json(respModel.errorModel('Error: El usuario no existe'));
+    res.json(respModel.errorModel('Error: El usuario no existe o no estas habilitado para ingresar, comunicate con la autoridad correspondiente'));
 
   }
   
