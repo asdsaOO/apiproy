@@ -1,55 +1,112 @@
-const pooldb=require('../conf/db')
+const pooldb = require('../conf/db');
+const { spawn } = require('child_process');
+const path = require('path');
 
-async function obtenerLeccion (req,res){
-  try{
-  const consulta = 'SELECT* FROM "Actividades" a LIMIT 10';
-  const resp =  await pooldb.query(consulta);
-  res.json(resp.rows)
-  }catch(e){
-    console.log(e);
-  
+
+
+async function obtenerLeccion(req, res) {
+  try {
+    console.log('Obteniendo datos de actividades...');
+    const id = (req.query).idUsuario;
+    // Consulta para obtener datos de actividades
+    const consulta = `SELECT a.id, a.id_tema, a.id_subtema,$1::integer AS id_usuario FROM "Actividades" a ORDER BY RANDOM()`;
+    const resp = await pooldb.query(consulta,[id]);
+    console.log('Datos obtenidos de la base de datos:', resp.rows);
+    
+    // Serializar los datos a JSON
+    const inputData = JSON.stringify(resp.rows);
+    console.log('Datos enviados al script de Python:', inputData);
+
+    const pythonScriptPath = path.join(__dirname, '../python/predecir.py'); 
+
+    // Ejecutar el script de Python
+    const pythonProcess = spawn('python', [pythonScriptPath]);
+
+    // Capturar la salida del script
+    pythonProcess.stdout.on('data', async (data) => {
+      console.log(`Salida del script Python: ${data.toString()}`);
+      try {
+        const result = JSON.parse(data.toString());
+        if (!res.headersSent) { // Solo enviar si los encabezados no han sido enviados
+          console.log(result);
+          const consulta2 = `SELECT * FROM "Actividades" a WHERE a.id IN (${result});`
+          const resp2= await pooldb.query(consulta2);
+          console.log(consulta2);
+          
+          res.json(resp2.rows); // Enviar respuesta al cliente
+        }
+      } catch (error) {
+        console.error('Error al parsear la respuesta de Python:', error);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Error en el formato de los datos recibidos del script Python' });
+        }
+      }
+    });
+
+    // Capturar errores del script Python
+    pythonProcess.stderr.on('data', (data) => {
+      console.error(`Error en el script Python: ${data.toString()}`);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error en el script Python' });
+      }
+    });
+
+    pythonProcess.on('close', (code) => {
+      console.log(`El proceso Python finalizó con código ${code}`);
+    });
+
+    // Enviar los datos al script Python
+    pythonProcess.stdin.write(inputData);
+    pythonProcess.stdin.end();
+
+  } catch (e) {
+    console.error('Error en la función obtenerLeccion:', e);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Error en el servidor' });
+    }
   }
-
 }
 
-async function guardarLeccion(req,res){
+
+
+async function guardarLeccion(req, res) {
   console.log('guardando leccion');
-  
+
   const data = req.body;
-  try{
-    const consulta=`SELECT* from public.fn_insertar_actividades_realizadas($1::jsonb)`;
-    const resp =  await pooldb.query(consulta,[data]);
-    const consulta_completa =(`SELECT* from public.fn_insertar_actividades_realizadas($1::jsonb)`,[data]);
+  try {
+    const consulta = `SELECT* from public.fn_insertar_actividades_realizadas($1::jsonb)`;
+    const resp = await pooldb.query(consulta, [data]);
+    const consulta_completa = (`SELECT* from public.fn_insertar_actividades_realizadas($1::jsonb)`, [data]);
     console.log(consulta_completa);
-    
+
     console.log(resp.rows);
-    
+
     res.json(resp.rows)
 
-  }catch(e){
+  } catch (e) {
     console.log(e);
-    
+
 
   }
 }
 
-async function listarLeccionesRealizadas(req,res){
-  try{
+async function listarLeccionesRealizadas(req, res) {
+  try {
     console.log('listando lecciones');
-    
-  const data = req.query;
-  console.log(data);
-  const consulta= `SELECT * FROM public.fn_obtener_lecciones_por_usuario($1::jsonb);`;
-  const resp = await pooldb.query(consulta,[data]);
-  
-  res.json(resp.rows)
-  }catch(e){
+
+    const data = req.query;
+    console.log(data);
+    const consulta = `SELECT * FROM public.fn_obtener_lecciones_por_usuario($1::jsonb);`;
+    const resp = await pooldb.query(consulta, [data]);
+
+    res.json(resp.rows)
+  } catch (e) {
     console.log(e);
-    
+
   }
 
 }
-module.exports={
+module.exports = {
   obtenerLeccion,
   guardarLeccion,
   listarLeccionesRealizadas

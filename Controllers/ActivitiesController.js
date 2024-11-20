@@ -20,7 +20,7 @@ async function agregarActividad (req,res){
 
 async function listarActividades (req,res){
   try{
-    console.log('adfadf');
+    
     
     const data = req.body;
     const consulta = `select * from public.fn_listar_actividades(5)`;

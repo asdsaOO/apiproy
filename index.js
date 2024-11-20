@@ -7,6 +7,9 @@ const {accountRouter} = require('./Routers/AccountRoute')
 const {usersRoute}= require ('./Routers/UsersRoute');
 const {activitiesRouter} = require ('./Routers/ActivitiesRoute')
 const {lessonsRouter}= require ('./Routers/LessonsRoute');
+const {resultsRouter}=require('./Routers/ResultRoute');
+////////////////////////////////////
+const {modelRouter}= require('./Routers/TrainModelRoute');
 
 
 const app= express();
@@ -23,6 +26,9 @@ app.use('/api/account',accountRouter);
 app.use('/api/users',usersRoute);
 app.use('/api/actividades',activitiesRouter);
 app.use('/api/lessons',lessonsRouter);
+app.use('/api/resultados',resultsRouter);
+///////////////////////
+app.use('/api/modelo',modelRouter);
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
