@@ -6,6 +6,9 @@ const resultsRouter=express.Router();
 resultsRouter.get('/listarRank',controller.obtenerClasificacion);
 resultsRouter.post('/cerrarAbrirTemporada',controller.abrir_cerrar_temporada);
 resultsRouter.post('/registroActividad',controller.registroActividade);
+resultsRouter.get('/listarDatosLeccion',controller.obtenerDatosLeccion);
+resultsRouter.get ('/obtenerDatosRendimiento',controller.obtenerDatosRendimiento);
+resultsRouter.get ('/obtenerClasificacionPersonal',controller.obtenerClasificacionPersonal);
 
 
 module.exports={
