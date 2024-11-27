@@ -21,9 +21,7 @@ async function habilitarEstudiante (req,res){
     const consulta = `SELECT * FROM fn_habilitar_deshabilitar($1::jsonb)`;
     const response =  await pooldb.query(consulta,[data]);
     console.log(response.rows);
-
     res.json(response.rows);
-    
     
 
   }catch(e){

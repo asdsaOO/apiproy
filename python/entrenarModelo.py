@@ -1,49 +1,45 @@
-import sys
-import json
-import numpy as np
-import pandas as pd
 import os
-from sklearn.ensemble import RandomForestRegressor
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor  # Asegúrate de usar el regressor
+from sklearn.model_selection import train_test_split
 import joblib
 
 # Obtener la ruta absoluta del script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Definir la ruta global al modelo
+# Definir la ruta absoluta del archivo CSV
+csv_file_path = os.path.join(script_dir, '../data/inpDataModel.csv')
+
+# Cargar los datos desde el archivo CSV
+data = pd.read_csv(csv_file_path)
+
+# Imprimir las columnas para verificar
+print(data.columns)
+
+# Definir las características (X) y la etiqueta (y)
+X = data[['ID Actividad Realizada', 'ID Tema', 'ID Subtema','ID Usuario']]  # Ahora sin 'ID Tipo'
+y = data[['Resultado', 'Tiempo']]  # Etiqueta (0 o 1), dependiendo de cómo quieras predecir
+
+# Dividir los datos en entrenamiento y prueba (80% entrenamiento, 20% prueba)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Inicializar el modelo Random Forest
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+
+# Entrenar el modelo con los datos de entrenamiento
+model.fit(X_train, y_train)
+
+# Evaluar el modelo con los datos de prueba
+y_pred = model.predict(X_test)
+
+# Mostrar el reporte de clasificación (puedes cambiar a otro tipo de métrica según tus necesidades)
+from sklearn.metrics import mean_squared_error
+print("Error cuadrático medio:", mean_squared_error(y_test, y_pred))
+
+# Definir la ruta para guardar el modelo entrenado
 model_file_path = os.path.join(script_dir, '../data/random_forest_model.pkl')
 
-# Leer los datos desde stdin
-input_data = sys.stdin.read()
+# Guardar el modelo entrenado en un archivo
+joblib.dump(model, model_file_path)
 
-# Convertir los datos JSON a un objeto de Python
-activities = json.loads(input_data)
-
-# Cargar el modelo entrenado
-model = joblib.load(model_file_path)
-
-# Crear un DataFrame con las mismas columnas que se usaron en el entrenamiento
-X_new = pd.DataFrame([ 
-    [activity['id'], activity['id_tema'], activity['id_subtema'], activity['id_usuario']] 
-    for activity in activities
-], columns=['ID Actividad Realizada', 'ID Tema', 'ID Subtema', 'ID Usuario'])  # Solo 4 columnas
-
-# Obtener las predicciones de puntaje para cada actividad
-predictions = model.predict(X_new)
-
-# Definir el umbral para identificar actividades no resolubles
-threshold = 0.5  # Puedes ajustar este valor según el comportamiento de tu modelo
-
-# Lista para almacenar las actividades no resolubles
-non_resolvable_activities = []
-
-# Filtrar las actividades que no se pueden resolver (puntaje bajo)
-for i, score in enumerate(predictions):
-    if score < threshold:  # Si el puntaje es menor que el umbral, es no resoluble
-        non_resolvable_activities.append(activities[i]['id'])
-    
-    # Limitar a 5 actividades no resolubles
-    if len(non_resolvable_activities) == 5:
-        break
-
-# Devolver las actividades no realizables
-print(json.dumps(non_resolvable_activities))
+print("Modelo entrenado y guardado correctamente.")

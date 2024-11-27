@@ -16,7 +16,6 @@ async function authUser(req,res){
   console.log('el id es'+response.rows[0].id);
   if(response.rows[0].oboolean){
     if(await argon2.verify(response.rows[0].opassword,data.password.toString())){
-      //se autentico correctamente
       const tokenPayload={
         id:data.password,
         fistName: "user",
@@ -26,7 +25,6 @@ async function authUser(req,res){
         idUsuario:response.rows[0].id
       }
       const token = jwt.sign(tokenPayload,process.env.JWT_KEY);
-      //console.log(token);
       res.cookie('Nkauth',token);
       res.json(respModel.successModel());
 

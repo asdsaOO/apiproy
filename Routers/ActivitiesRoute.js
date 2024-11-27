@@ -1,11 +1,12 @@
 const express = require('express');
 const controller = require ('../Controllers/ActivitiesController')
 const activitiesRouter=express.Router();
+const autenticador=require('../Controllers/AuthController');
 
-activitiesRouter.post('/crearActividad',controller.agregarActividad);
-activitiesRouter.get('/listarActividades',controller.listarActividades);
-activitiesRouter.post('/actualizarActividades',controller.actualizarActividad);
-activitiesRouter.post('/eliminarActividad',controller.eliminarActividad)
+activitiesRouter.post('/crearActividad',autenticador.authToken,controller.agregarActividad);
+activitiesRouter.get('/listarActividades',autenticador.authToken,controller.listarActividades);
+activitiesRouter.post('/actualizarActividades',autenticador.authToken,controller.actualizarActividad);
+activitiesRouter.post('/eliminarActividad',autenticador.authToken,controller.eliminarActividad)
 
 module.exports={
   activitiesRouter

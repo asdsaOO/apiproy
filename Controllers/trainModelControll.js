@@ -21,15 +21,12 @@ const csvWriter = createCsvWriter({
 });
 
 async function generateCsvWriter(req, res) {
-  console.log('Generando archivo CSV');
-  
   try {
     // Verificar que la carpeta exista
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory);
       console.log(`Carpeta ${directory} creada exitosamente.`);
     }
-
     // Consulta a la base de datos
     const query = `
       SELECT 
@@ -51,12 +48,10 @@ async function generateCsvWriter(req, res) {
         a.activo = true;
     `;
     const resp = await pooldb.query(query);
-
     // Preprocesar los datos antes de escribir al CSV
     const preprocessedData = resp.rows.map(row => {
       // Convertir 'true'/'false' en valores numéricos (1/0)
       const resultado = row.resultado === true ? 1 : 0;
-      
       // Normalizar el campo 'tiempo' (si es necesario, por ejemplo dividiendo por 1000 para pasarlo a segundos)
       const tiempo = row.tiempo / 1000; // En segundos
 
@@ -69,14 +64,11 @@ async function generateCsvWriter(req, res) {
         id_usuario: row.id_usuario
       };
     });
-
     console.log('Datos preprocesados:', preprocessedData);  // Depurar los datos
-
     // Escribir los datos preprocesados al archivo CSV
     await csvWriter.writeRecords(preprocessedData);
     console.log('Archivo CSV generado exitosamente en:', filePath);
     await pruebaPythonScript();
-    
     // Responder al cliente si es necesario
     res.status(200).json({ message: 'Archivo CSV generado exitosamente' });
   } catch (error) {
