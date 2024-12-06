@@ -74,7 +74,7 @@ async function registrarUsuario(req,res){
 
 
 async function listarRoles (req,res){
-  const response = await pooldb.query('SELECT* FROM "Roles"');
+  const response = await pooldb.query('SELECT * FROM "Roles" WHERE id <> 1;');
   console.log("listando");
   console.log(response.rows);
   

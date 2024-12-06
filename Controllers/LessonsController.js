@@ -9,7 +9,7 @@ async function obtenerLeccion(req, res) {
     console.log('Obteniendo datos de actividades...');
     const id = (req.query).idUsuario;
     // Consulta para obtener datos de actividades
-    const consulta = `SELECT a.id, a.id_tema, a.id_subtema,$1::integer AS id_usuario FROM "Actividades" a ORDER BY RANDOM()`;
+    const consulta = `SELECT a.id, a.id_tema, a.id_subtema,$1::integer AS id_usuario FROM "Actividades" a where a.activo=true ORDER BY RANDOM()`;
     const resp = await pooldb.query(consulta, [id]);
     console.log('Datos obtenidos de la base de datos:', resp.rows);
 
@@ -81,7 +81,7 @@ async function obtenerOtrasActividades(idActividades, idUsuario) {
       JOIN public."Lecciones" l ON ar.id_leccion = l.id
       WHERE l.id_usuario = $1::integer
     )
-    AND a.id NOT IN (${idActividades.join(",")}) 
+    AND a.id NOT IN (${idActividades.join(",")}) and a.activo =true
     ORDER BY RANDOM()
     LIMIT 5;
   `;
@@ -98,7 +98,7 @@ async function obtenerOtrasActividades(idActividades, idUsuario) {
   const consultaCompletadas = `
     SELECT * 
     FROM public."Actividades" a
-    WHERE a.id NOT IN (${idsSeleccionados.join(",")}) 
+    WHERE a.id NOT IN (${idsSeleccionados.join(",")}) and a.activo=true
     ORDER BY RANDOM()
     LIMIT $1::integer;
   `;
