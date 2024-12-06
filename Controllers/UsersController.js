@@ -2,10 +2,13 @@ const pooldb = require ('../conf/db');
 const errorModel = require ('../Models/errorModel');
 
 async function listarEstudiantes (req,res){
+  const data = req.query;
+  console.log(data);
+  
   try{
     console.log("controlador");
     
-    const response =  (await pooldb.query(`SELECT* FROM  public.fn_listar_estudiantes (5)`)).rows;
+    const response =  (await pooldb.query(`SELECT* FROM  public.fn_listar_estudiantes ($1::integer)`,[data.tipo])).rows;
     res.json (response);
 
   }catch(e){

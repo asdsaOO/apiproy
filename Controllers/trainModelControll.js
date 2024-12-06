@@ -68,16 +68,15 @@ async function generateCsvWriter(req, res) {
     // Escribir los datos preprocesados al archivo CSV
     await csvWriter.writeRecords(preprocessedData);
     console.log('Archivo CSV generado exitosamente en:', filePath);
-    await pruebaPythonScript();
+    await pruebaPythonScript(res);
     // Responder al cliente si es necesario
-    res.status(200).json({ message: 'Archivo CSV generado exitosamente' });
   } catch (error) {
     console.error('Error al generar el archivo CSV:', error);
-    res.status(500).json({ error: 'Error al generar el archivo CSV' });
+    
   }
 }
 
-async function pruebaPythonScript() {
+async function pruebaPythonScript(res) {
   const pythonScriptPath = path.join(__dirname, '../python/entrenarModelo.py');
 
   if (fs.existsSync(pythonScriptPath)) {
@@ -90,13 +89,19 @@ async function pruebaPythonScript() {
   exec(`python "${pythonScriptPath}"`, (error, stdout, stderr) => {
     if (error) {
       console.error(`Error al ejecutar el script: ${error.message}`);
-      return;
+      res.status(500).json([{omessage:'Error al ejecutar el script',oboolean:false}]);
+      return ;
     }
     if (stderr) {
       console.error(`stderr: ${stderr}`);
+      res.status(500).json([{omessage:`${stderr}`,oboolean:false}]);
+      
       return;
     }
     console.log(`stdout: ${stdout}`);
+    res.status(200).json([{omessage:'Se actualizaron los datos del modelo',oboolean:true}]);
+    
+    
   });
 }
 

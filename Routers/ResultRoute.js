@@ -9,6 +9,8 @@ resultsRouter.post('/registroActividad',controller.registroActividade);
 resultsRouter.get('/listarDatosLeccion',controller.obtenerDatosLeccion);
 resultsRouter.get ('/obtenerDatosRendimiento',controller.obtenerDatosRendimiento);
 resultsRouter.get ('/obtenerClasificacionPersonal',controller.obtenerClasificacionPersonal);
+resultsRouter.get ('/obtenerDatosRango',controller.obtenerDatosRango);
+
 
 
 module.exports={
