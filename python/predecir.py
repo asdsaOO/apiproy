@@ -31,7 +31,7 @@ X_new = pd.DataFrame([
 predictions = model.predict(X_new)
 
 # Definir el umbral para identificar actividades no resolubles
-threshold = 0.5  # Puedes ajustar este valor según el comportamiento de tu modelo
+threshold = 0.4  # Puedes ajustar este valor según el comportamiento de tu modelo
 
 # Lista para almacenar las actividades no resolubles
 non_resolvable_activities = []

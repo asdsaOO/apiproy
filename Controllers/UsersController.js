@@ -33,7 +33,25 @@ async function habilitarEstudiante (req,res){
     
   }
 }
+
+async function eliminarEstudiante (req,res){
+  try{
+    const data = req.body;
+    console.log(data);
+    const consulta = `SELECT * FROM fn_eliminar_estudiante($1::jsonb);`;
+    const response =  await pooldb.query(consulta,[data]);
+    console.log(response.rows);
+    res.json(response.rows);
+    
+
+  }catch(e){
+    console.log(e);
+    res.json( errorModel.errorModel('API'+e));
+    
+  }
+}
 module.exports = {
   listarEstudiantes,
-  habilitarEstudiante
+  habilitarEstudiante,
+  eliminarEstudiante
 }

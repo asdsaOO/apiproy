@@ -6,5 +6,6 @@ const usersRoute = express.Router();
 
 usersRoute.get('/estudiantes',autenticador.authToken,controller.listarEstudiantes);
 usersRoute.put ('/habilitarEstudiante',autenticador.authToken,controller.habilitarEstudiante);
+usersRoute.post ('/eliminarEstudiante',autenticador.authToken,controller.eliminarEstudiante);
 
 module.exports={usersRoute}
